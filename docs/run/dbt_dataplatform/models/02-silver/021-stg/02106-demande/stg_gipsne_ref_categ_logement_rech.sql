@@ -6,42 +6,50 @@
     
     
 
-    EXEC('create view "stg"."stg_gipsne_ref_categ_logement_rech__dbt_temp__dbt_tmp_vw" as /**
- *
- * Description :    Alimentation de la table stg_gipsne_ref_categ_logement_rech
- * Fréquence :      Annuel
- * Mode :           Annule et remplace
- * Source:          raw_gipsne_ref_categ_logement_rech
- * Cible :          stg_gipsne_ref_categ_logement_rech
- */
+    EXEC('create view "stg"."stg_gipsne_ref_categ_logement_rech__dbt_temp__dbt_tmp_vw" as 
 
 
 
--------------------------------------------------------------------
---******************* RENOMMAGE DES COLONNES **********************
--------------------------------------------------------------------
-with cte_rename_raw_gipsne_ref_categ_logement_rech as
-(
-    select 
-        --[CLE_CATEG_LOGEMENT],
-        [CODE_CATEG_LOGEMENT]   as categorie_logement_code,
-        [ORDRE]                 as categorie_logement_ordre_affichage,
-        [LIBL_CATEG_LOGEMENT]   as categorie_logement_libelle_long,
-        [LIBC_CATEG_LOGEMENT]   as categorie_logement_libelle_court
-        --[DEBUTVALIDITE],
-        --[FINVALIDITE],
-    from   
-         "wh_dp_bronze"."raw"."raw_gipsne_ref_categ_logement_rech"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+with cte_rename as (
+    select
+    
+    
+        CLE_CATEG_LOGEMENT as categorie_logement_cle,
+    
+
+    
+    
+        CODE_CATEG_LOGEMENT as categorie_logement_code,
+    
+
+ 
+    [ORDRE] as categorie_logement_ordre_affichage,
+    [LIBL_CATEG_LOGEMENT] as categorie_logement_libelle_long,
+    [LIBC_CATEG_LOGEMENT] as categorie_logement_libelle_court
+from 
+    "wh_dp_bronze"."raw"."raw_gipsne_ref_categ_logement_rech"
 ),
 
--------------------------------------------------------------------
---************* NETTOYAGE ET TYPAGE DES COLONNES ******************
--------------------------------------------------------------------
-cte_clean_and_type_raw_gipsne_ref_categ_logement_rech as 
- (
-    select
-        categorie_logement_code,
-        
+cte_cast as (
+select
+    categorie_logement_cle,
+    categorie_logement_code,
+    
     case
         -- Valeurs nulles ou codes à ignorer
         when categorie_logement_ordre_affichage is null 
@@ -59,34 +67,24 @@ cte_clean_and_type_raw_gipsne_ref_categ_logement_rech as
         -- Sinon, valeur par défaut
         else CAST(NULL AS INTEGER)
     end
-  as categorie_logement_ordre_affichage,
-        categorie_logement_libelle_long,
-        categorie_logement_libelle_court
-       
-    from  cte_rename_raw_gipsne_ref_categ_logement_rech
- ),
+ as categorie_logement_ordre_affichage,
+    categorie_logement_libelle_long,
+    categorie_logement_libelle_court
+from cte_rename
+),
 
- -------------------------------------------------------------------
---************************ ETAPE FINALE **************************
--------------------------------------------------------------------
-
- cte_finale as
-(
-    select 
-        *
-        , 
+cte_finale as (
+select
+    *,
+    
     CAST(SYSDATETIMEOFFSET() AT TIME ZONE ''Romance Standard Time'' AS datetime2(3))
  as _meta_loaded_at
-
-    from cte_clean_and_type_raw_gipsne_ref_categ_logement_rech
+from cte_cast
 )
-     
 
+select * from cte_finale
 
-select 
-    *
-from 
-    cte_finale;');
+;');
 
 
 
