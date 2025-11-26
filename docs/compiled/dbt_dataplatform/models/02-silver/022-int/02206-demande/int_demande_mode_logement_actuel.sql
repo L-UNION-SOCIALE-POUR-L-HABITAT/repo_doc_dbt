@@ -4,7 +4,8 @@
  *                  Filtrage, regroupement, application de conditions, calculs
  * Fréquence :      Annuel
  * Mode :           Annule et remplace
- * Source:          stg_gipsne_ele_mode_logement_actuel             
+ * Source:          stg_gipsne_ele_mode_logement_actuel      
+                    int_mode_logement       
  * Cible :          int_demande_mode_logement_actuel
  
  */
@@ -51,8 +52,8 @@ cte_calc_stg_gipsne_ele_mode_logement_actuel as
         , stg.demande_mode_logement_actuel_ordre_affichage
         , 
     case
-        when year(demande_mode_logement_actuel_annee) = (
-            select max(year(demande_mode_logement_actuel_annee))
+        when (demande_mode_logement_actuel_annee) = (
+            select max((demande_mode_logement_actuel_annee))
             from cte_stg_gipsne_ele_mode_logement_actuel
         ) then 1
         else 0
@@ -74,6 +75,22 @@ cte_hk_calc_stg_gipsne_ele_mode_logement_actuel as
     select
         *
         ,
+    
+        concat_ws('||', demande_mode_logement_actuel_annee, demande_mode_logement_actuel_demande_id, mode_logement_code) 
+    
+ 
+                            as demande_mode_logement_actuel_bk  
+        ,
+     
+        HASHBYTES('SHA2_256', 
+    
+        concat_ws('||', demande_mode_logement_actuel_annee, demande_mode_logement_actuel_demande_id, mode_logement_code) 
+    
+)  
+ 
+ 
+                            as demande_mode_logement_actuel_hk  
+        ,
      
         HASHBYTES('SHA2_256', 
     
@@ -83,6 +100,7 @@ cte_hk_calc_stg_gipsne_ele_mode_logement_actuel as
  
  
                             as mode_logement_hk
+         
         ,
      
         HASHBYTES('SHA2_256', 
