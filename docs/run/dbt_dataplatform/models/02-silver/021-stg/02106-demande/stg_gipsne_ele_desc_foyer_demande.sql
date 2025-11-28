@@ -68,20 +68,24 @@ cte_clean_and_type_raw_gipsne_ele_desc_foyer_demande as
         demandeur_type_code,
         
     case
+        -- Gestion des valeurs nulles ou vides
         when demandeur_foyer_naissance_date is null or trim(demandeur_foyer_naissance_date) = '''' then CAST(NULL AS DATE)
+        
+        -- Gestion des valeurs ''NA'' (Not Available)
         when upper(trim(demandeur_foyer_naissance_date)) in (''NA'', ''NA/NA'') then CAST(NULL AS DATE)
 
+        -- Format MM/AAAA (ex: 05/1981)
+        -- Convertit en AAAA-MM-01 (1er du mois par défaut)
         
-       -- Exemple en entrée : ''24-06-2020 00:00:00''
-        when len(trim(demandeur_foyer_naissance_date)) < 10 then CAST(NULL AS DATE)
-        else TRY_CAST(
-            CONCAT(
-                SUBSTRING(trim(REPLACE(demandeur_foyer_naissance_date, ''/'', ''-'')), 7, 4), ''-'',  -- AAAA
-                SUBSTRING(trim(REPLACE(demandeur_foyer_naissance_date, ''/'', ''-'')), 4, 2), ''-'',  -- MM
-                SUBSTRING(trim(REPLACE(demandeur_foyer_naissance_date, ''/'', ''-'')), 1, 2)        -- JJ
-            ) AS DATE
-        )
-    
+            when len(trim(demandeur_foyer_naissance_date)) < 10 then CAST(NULL AS DATE)
+            else TRY_CAST(
+                CONCAT(
+                    SUBSTRING(trim(REPLACE(demandeur_foyer_naissance_date, ''/'', ''-'')), 7, 4), ''-'',  -- Année (position 7, 4 caractères)
+                    SUBSTRING(trim(REPLACE(demandeur_foyer_naissance_date, ''/'', ''-'')), 4, 2), ''-'',  -- Mois (position 4, 2 caractères)
+                    SUBSTRING(trim(REPLACE(demandeur_foyer_naissance_date, ''/'', ''-'')), 1, 2)        -- Jour (position 1, 2 caractères)
+                ) AS DATE
+            )
+        
     end
  
                                                                     as demandeur_foyer_naissance_date,
