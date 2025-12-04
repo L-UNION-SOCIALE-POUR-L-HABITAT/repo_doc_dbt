@@ -86,7 +86,9 @@ cte_filter_stg_orfi_fait as
     from 
         cte_stg_orfi_fait
 
-    where   orfi_fait_date > ''2021-01-01''
+    where   
+    orfi_fait_date >= cast(''2021-01-01'' as date)
+
         and orfi_fait_statut_actuel <> ''REFUSED''
 
 ),

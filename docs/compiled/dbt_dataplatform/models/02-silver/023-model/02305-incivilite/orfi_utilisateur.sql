@@ -19,7 +19,6 @@ with
 cte_int_orfi_utilisateur as
 (
     select
-        orfi_utilisateur_hk
         orfi_utilisateur_id_code,
         personne_ldap_code_hk,
         personne_ldap_code,

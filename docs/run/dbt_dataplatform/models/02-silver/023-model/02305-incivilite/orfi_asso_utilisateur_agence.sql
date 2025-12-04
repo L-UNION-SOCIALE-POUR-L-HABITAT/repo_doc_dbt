@@ -29,8 +29,8 @@ cte_int_orfi_asso_utilisateur_agence as
     select
         orfi_asso_utilisateur_agence_hk,
         orfi_asso_utilisateur_agence_id_code,
-        orfi_utilisateur_hk,
-        orfi_utilisateur_id_code,
+        personne_ldap_code_hk,
+        personne_ldap_code
         orfi_agence_hk,
         orfi_agence_id_code
 

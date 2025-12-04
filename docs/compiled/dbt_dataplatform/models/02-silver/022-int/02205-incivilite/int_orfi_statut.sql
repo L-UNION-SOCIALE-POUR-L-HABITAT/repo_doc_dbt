@@ -64,7 +64,9 @@ cte_filter_stg_orfi_statut as
         cte_stg_orfi_statut
     
     Where orfi_statut_libelle <> 'REFUSED'
-    and   orfi_statut_date >  '2021-01-01'
+    and   
+    orfi_statut_date >= cast('2021-01-01' as date)
+
 
 ),
 

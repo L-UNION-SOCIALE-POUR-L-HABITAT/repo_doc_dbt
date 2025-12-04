@@ -74,11 +74,13 @@ cte_filter_stg_orfi_asso_utilisateur_agence as
 cte_calc_stg_orfi_asso_utilisateur_agence  as 
  (
     select
-        *
+        orfi_asso_utilisateur_agence_id_code,
+        cte_filter_stg_orfi_asso_utilisateur_agence.orfi_utilisateur_id_code,
+        orfi_agence_id_code,
+        personne_ldap_code
     
     from cte_filter_stg_orfi_asso_utilisateur_agence
-    --left join cte_stg_reference on ....
-    --left join cte_stg_orfi_group on ....
+    left join int_orfi_utilisateur on cte_filter_stg_orfi_asso_utilisateur_agence.orfi_utilisateur_id_code = int_orfi_utilisateur.orfi_utilisateur_id_code
  ),
 
 
@@ -106,16 +108,17 @@ cte_hk_calc_stg_orfi_asso_utilisateur_agence as
     
 )  
  
-                           as orfi_agence_hk
+                          as orfi_agence_hk
         , 
      
         HASHBYTES(''SHA2_256'', 
     
-        cast(orfi_utilisateur_id_code as varchar(max))
+        cast(personne_ldap_code as varchar(max))
     
 )  
  
-                      as orfi_utilisateur_hk
+                           as personne_ldap_code_hk
+
 
         
     from 

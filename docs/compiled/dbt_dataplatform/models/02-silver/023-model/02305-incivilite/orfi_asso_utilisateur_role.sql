@@ -21,8 +21,8 @@ cte_int_orfi_asso_utilisateur_role as
     select
         orfi_asso_utilisateur_role_hk,
         orfi_asso_utilisateur_role_id_code,
-        orfi_utilisateur_hk,
-        orfi_utilisateur_id_code,
+        personne_ldap_code_hk,
+        personne_ldap_code,
         orfi_role_hk,
         orfi_role_id_code
 
